@@ -44,14 +44,15 @@ class EchoClientProtocol(QuicConnectionProtocol):
                     self.done_event.set_result(True)
 
 
-async def run_client(log_level, filename):
+async def run_client(log_level, filename, host, port):
     setup_logging(log_file="web_client.log", level=log_level)
 
     config = QuicConfiguration(is_client=True)
     # Disable cert verification for testing with self-signed cert
     config.verify_mode = False
     # Must match your certificate’s common name (CN) or subjectAltName
-    config.server_name = "localhost"
+    config.server_name = host
+    config.port = port
 
     # We'll signal this future once the response is received
     done_event = asyncio.get_event_loop().create_future()
@@ -70,7 +71,7 @@ async def run_client(log_level, filename):
 
     try:
         async with connect(
-            "localhost", 4433,
+            host, port,
             configuration=config,
             create_protocol=protocol_factory
         ) as client:
@@ -86,6 +87,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="QUIC Client")
     parser.add_argument("--log-level", default="DEBUG", help="DEBUG, INFO, WARNING, etc.")
     parser.add_argument("--file", default="index.html", help="File to request from the server")
+    parser.add_argument("--host", default="10.52.2.182", help="Server IP address")
+    parser.add_argument("--port", default="4433", help="Server port")
     args = parser.parse_args()
 
-    asyncio.run(run_client(log_level=args.log_level, filename=args.file))
+    asyncio.run(run_client(log_level=args.log_level, filename=args.file, host=args.host, port=args.port))

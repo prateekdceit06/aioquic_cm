@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  clientaioquic1:
+    build: .
+    image: aioquic:clienta1
+    container_name: clientaioquic1
+    cap_add:
+      - NET_ADMIN
+    networks:
+      netC:
+        ipv4_address: 172.28.0.10
+      netD:
+        ipv4_address: 172.29.0.10
+    tty: true
+    stdin_open: true
+    command: zsh
+    environment:
+      - TZ=America/New_York
+
+  # clientaioquic2:
+  #   image: aioquic:clienta1
+  #   container_name: clientaioquic2
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     netC:
+  #       ipv4_address: 172.28.0.11
+  #     netD:
+  #       ipv4_address: 172.29.0.11
+  #   tty: true
+  #   stdin_open: true
+  #   command: zsh
+  #   environment:
+  #     - TZ=America/New_York
+
+  # clientaioquic3:
+  #   image: aioquic:clienta1
+  #   container_name: clientaioquic3
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     netC:
+  #       ipv4_address: 172.28.0.12
+  #     netD:
+  #       ipv4_address: 172.29.0.12
+  #   tty: true
+  #   stdin_open: true
+  #   command: zsh
+  #   environment:
+  #     - TZ=America/New_York
+
+networks:
+  netC:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+  netD:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.0.0/16
